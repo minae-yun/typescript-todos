@@ -1,61 +1,94 @@
-interface Todo {
-  id: number;
-  title: string;
-  done: boolean;
+interface PhoneNumberDictionary {
+  [phone: string]: {
+    num: string;
+  };
 }
 
-let todoItems: Todo[];
+interface Contact {
+  name: string;
+  address: string;
+  phones: PhoneNumberDictionary;
+}
+
+enum PhoneType {
+    Home = 'home',
+    Office = 'office',
+    Studio = 'studio',
+}
 
 // api
-function fetchTodoItems(): Todo[] {
-  const todos: Todo[] = [
-    { id: 1, title: '안녕', done: true },
-    { id: 2, title: '타입', done: false },
-    { id: 3, title: '스크립트', done: false },
-  ];
-  return todos;
+// TODO: 아래 함수의 반환 타입을 지정해보세요.
+function fetchContacts(): Promise<Contact[]> {
+    // TODO: 아래 변수의 타입을 지정해보세요.
+    const contacts: Contact[] = [
+        {
+            name: 'Julio',
+            address: 'Suwon',
+            phones: {
+                home: {
+                    num: '010-1234-5678',
+                },
+                office: {
+                    num: '02-1234-5678',
+                },
+            },
+        },
+        {
+            name: 'Julio Kim',
+            address: 'Sangam',
+            phones: {
+                office: {
+                    num: '02-4321-9876',
+                },
+            },
+        },
+    ];
+    return new Promise(resolve => {
+        setTimeout(() => resolve(contacts), 2000);
+    });
 }
 
-// crud methods
-function fetchTodos(): Todo[] {
-  const todos = fetchTodoItems();
-  return todos;
+// main
+class AddressBook {
+    // TODO: 아래 변수의 타입을 지정해보세요.
+    contacts: Contact[] = [];
+
+    constructor() {
+        this.fetchData();
+    }
+
+    fetchData(): void {
+        fetchContacts().then(contacts => {
+            this.contacts = contacts;
+        });
+    }
+
+    /* TODO: 아래 함수들의 파라미터 타입과 반환 타입을 지정해보세요 */
+    findContactByName(name: string): Contact[] {
+        return this.contacts.filter(contact => contact.name === name);
+    }
+
+    findContactByAddress(address: string): Contact[] {
+        return this.contacts.filter(contact => contact.address === address);
+    }
+
+    findContactByPhone(phoneNumber: string, phoneType: PhoneType): Contact[] {
+        return this.contacts.filter(
+            contact => contact.phones[phoneType].num === phoneNumber
+        );
+    }
+
+    addContact(contact: Contact): void {
+        this.contacts.push(contact);
+    }
+
+    displayListByName(): string[] {
+        return this.contacts.map(contact => contact.name);
+    }
+
+    displayListByAddress(): string[] {
+        return this.contacts.map(contact => contact.address);
+    }
 }
 
-function addTodo(todo: Todo): void {
-  todoItems.push(todo);
-}
-
-function deleteTodo(index: number): void {
-  todoItems.splice(index, 1);
-}
-
-function completeTodo(index: number, todo: Todo): void {
-  todo.done = true;
-  todoItems.splice(index, 1, todo);
-}
-
-// business logic
-function logFirstTodo(): Todo {
-  return todoItems[0];
-}
-
-function showCompleted(): Todo[] {
-  return todoItems.filter(item => item.done);
-}
-
-// TODO: 아래 함수의 내용을 채워보세요. 아래 함수는 `addTodo()` 함수를 이용하여 2개의 새 할 일을 추가하는 함수입니다.
-function addTwoTodoItems(): void {
-  // addTodo() 함수를 두 번 호출하여 todoItems에 새 할 일이 2개 추가되어야 합니다.
-  addTodo({ id: 4, title: 'Hello', done: false });
-  addTodo({ id: 5, title: 'world', done: false });
-}
-
-// NOTE: 유틸 함수
-function log(): void {
-  console.log(todoItems);
-}
-
-todoItems = fetchTodoItems();
-addTwoTodoItems();
-log();
+new AddressBook();
